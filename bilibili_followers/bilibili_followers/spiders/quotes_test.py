@@ -30,7 +30,7 @@ class FollowerSpider(scrapy.Spider):
         pagesize = '20'
         time_from = '20200301'
         time_to = '20200331'
-        cate_id = '130'  # different tag chanel id
+        cate_id = '28'  # different tag chanel id, music_others(130),  music_original(28)
 
         # from page 1 to 100, 20 items per page
         for i in range(100):
