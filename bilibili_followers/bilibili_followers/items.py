@@ -10,5 +10,6 @@ import scrapy
 
 class BilibiliFollowersItem(scrapy.Item):
     # define the fields for your item here like:
-    # name = scrapy.Field()
+    USER = scrapy.Field()
+    FOLLOWERS = scrapy.Field()
     pass
