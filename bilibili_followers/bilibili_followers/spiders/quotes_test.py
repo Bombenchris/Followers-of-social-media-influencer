@@ -8,7 +8,8 @@ class FollowerSpider(scrapy.Spider):
     name = 'followers'
     start_urls = [
         # 'https://www.bilibili.com/v/douga/other/' # Animation others
-        'https://www.bilibili.com/v/douga/mad/'  # Animation MAD.AMV
+        #  'https://www.bilibili.com/v/douga/mad/'  # Animation MAD.AMV
+        'https://www.bilibili.com/v/cinephile/montage/'  # cinephile/montage
     ]
     headers = {
         "accept": "*/*",
@@ -27,22 +28,27 @@ class FollowerSpider(scrapy.Spider):
 
     def parse(self, response):
         callback = 'jqueryCallback_bili_9774461024721197'
-        # page = 1
         pagesize = '20'
         time_from = '20200101'
         time_to = '20200401'
-        cate_id = '24'  # different tag chanel id, music_others(130),  music_original(28), douga/other(27),  douga/MAD(24)
+        # Movie_montage (183)
 
         # from page 1 to 500, 20 items per page
-        for i in range(500):
-            # url = 'https://api.bilibili.com/x/relation/followers?vmid=546195&pn=1&ps=20&order=desc'
-            url = 'https://s.search.bilibili.com/cate/search?callback=' + callback + '&search_type=video&view_type=hot_rank' \
-                  + '&order=click&copy_right=-1&cate_id=' + cate_id + '&page=' + str(FollowerSpider.page_n) + '&pagesize=' \
-                  + pagesize + '&time_from=' + time_from + '&time_to=' + time_to
+        for month in range(4):
+            time_from = '20200{}01'.format(month+1)
+            time_to = '20200{}29'.format(month+1)
+            # from page 1 to 500, 20 items per page
+            for i in range(150):
+                # url = 'https://api.bilibili.com/x/relation/followers?vmid=546195&pn=1&ps=20&order=desc'
+                url = 'https://s.search.bilibili.com/cate/search?callback=' + callback \
+                      + '&search_type=video&view_type=hot_rank' \
+                      + '&order=click&copy_right=-1&cate_id=' + cate_id + '&page=' \
+                      + str(FollowerSpider.page_n) + '&pagesize=' \
+                      + pagesize + '&time_from=' + time_from + '&time_to=' + time_to
 
-            request = scrapy.Request(url, callback=self.parse_api, headers=self.headers)
-            FollowerSpider.page_n += 1
-            yield request
+                request = scrapy.Request(url, callback=self.parse_api, headers=self.headers)
+                FollowerSpider.page_n += 1
+                yield request
 
     def parse_api(self, response):
         LOAD = json.loads(response.body)
