@@ -29,11 +29,12 @@ class FollowerSpider(scrapy.Spider):
     def parse(self, response):
         callback = 'jqueryCallback_bili_9774461024721197'
         pagesize = '20'
+
         time_from = '20200101'
         time_to = '20200401'
+        cate_id = '183'  # different tag chanel id, music_others(130),  music_original(28) douga/other(27)
         # Movie_montage (183)
 
-        # from page 1 to 500, 20 items per page
         for month in range(4):
             time_from = '20200{}01'.format(month+1)
             time_to = '20200{}29'.format(month+1)
