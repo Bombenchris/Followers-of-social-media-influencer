@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 
 def read_from_db(curr, n_select):
-    curr.execute('SELECT COUNT(DISTINCT USER) FROM bilibili_db')
+    curr.execute('SELECT COUNT(USER) FROM bilibili_db')
     n = curr.fetchone()[0]  # total number of user
     # n_select = 20
     curr.execute('SELECT * FROM bilibili_db ORDER BY FOLLOWERS DESC LIMIT {}'.format(n_select))
@@ -41,9 +41,9 @@ def data_plot(curr, n_select):
 
 
 # database = 'bilibili_douga_other_01012020_01042020.db'
-database = 'bilibili_music_original_01032020_31032020.db'
+database = 'bilibili_ent_star_01012020_01042020.db'
 conn = sqlite3.connect(database)
 
 c = conn.cursor()
-n_select = 50
+n_select = 2000
 data_plot(c, n_select)

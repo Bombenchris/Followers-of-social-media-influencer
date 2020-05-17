@@ -9,7 +9,8 @@ class FollowerSpider(scrapy.Spider):
     start_urls = [
         # 'https://www.bilibili.com/v/douga/other/' # Animation others
         #  'https://www.bilibili.com/v/douga/mad/'  # Animation MAD.AMV
-        'https://www.bilibili.com/v/cinephile/montage/'  # cinephile/montage
+        # 'https://www.bilibili.com/v/cinephile/montage/'  # cinephile/montage
+        'https://www.bilibili.com/v/ent/star/'
     ]
     headers = {
         "accept": "*/*",
@@ -28,14 +29,14 @@ class FollowerSpider(scrapy.Spider):
     def parse(self, response):
         callback = 'jqueryCallback_bili_9774461024721197'
         pagesize = '20'
-        cate_id = '183'  # different tag chanel id, music_others(130),  music_original(28) douga/other(27)
-        # Movie_montage (183)
+        cate_id = '137'  # different tag chanel id, music_others(130),  music_original(28) douga/other(27)
+        # Movie_montage (183) # ent/star 137
 
         for month in range(4):
             time_from = '20200{}01'.format(month+1)
             time_to = '20200{}29'.format(month+1)
             # from page 1 to 500, 20 items per page
-            for i in range(100):
+            for i in range(200):
                 # url = 'https://api.bilibili.com/x/relation/followers?vmid=546195&pn=1&ps=20&order=desc'
                 url = 'https://s.search.bilibili.com/cate/search?callback=' + callback \
                       + '&search_type=video&view_type=hot_rank' \
