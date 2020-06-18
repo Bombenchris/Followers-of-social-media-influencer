@@ -11,7 +11,7 @@ class EdgesPipeline:
         self.create_table()
 
     def create_connection(self):
-        self.conn = sqlite3.connect("Overwatch_Edge_list.db")
+        self.conn = sqlite3.connect("Overwatch_Edge.db")
         self.curr = self.conn.cursor()
 
     def create_table(self):
@@ -20,19 +20,21 @@ class EdgesPipeline:
                 Target INTEGER,
                 Type TEXT,
                 Date TEXT,
+                Target_rank INTEGER,
                 UNIQUE (Source, Target)
                 )""")
 
     def store_db(self, item):
-        self.curr.execute("""insert or ignore into Edges_db values (?,?,?,?)""", (
+        self.curr.execute("""insert or ignore into Edges_db values (?,?,?,?,?)""", (
             item['SOURCE'],
             item['TARGET'],
             item['TYPE'],
-            item['DATE']
+            item['DATE'],
+            item['RANK']
         ))
         self.conn.commit()
 
-    def follower_parse(self, user_id, edgePage_cursor):
+    def follower_parse(self, user_id, rank, edgePage_cursor):
         if not edgePage_cursor:
             user_followers = twitch.get_users_follows(first=100, to_id=user_id)
             try:
@@ -53,6 +55,7 @@ class EdgesPipeline:
             items['TARGET'] = int(user_id)
             items['TYPE'] = 'Directed'
             items['DATE'] = follower['followed_at']
+            items['RANK'] = rank
             self.store_db(items)
         if edgePage_cursor and 'cursor' in twitch.get_users_follows(after=edgePage_cursor[0], first=100, to_id=user_id)[
             'pagination']:
@@ -84,7 +87,7 @@ class EdgesPipeline:
             self.followee_parse(user_id, edgePage_cursor)
 
 
-iMaxStackSize = 5000
+iMaxStackSize = 10000
 sys.setrecursionlimit(iMaxStackSize)
 
 twitch = Twitch('msopj3elolkfedu4zxkamqb5koywm3', 'mr36ie37di0w5tjrhah4lma0nh7aq8')
@@ -93,17 +96,17 @@ twitch.authenticate_app([])
 database = 'Overwatch.db'
 conn = sqlite3.connect(database)
 curr = conn.cursor()
-n_select = 30
-curr.execute('SELECT * FROM user_db ORDER BY FOLLOWERS DESC LIMIT {}'.format(n_select))
-# curr.execute('SELECT * FROM bilibili_db ORDER BY FOLLOWERS DESC LIMIT {} OFFSET 50'.format(n_select))
+n_select = 10
+curr.execute('SELECT * FROM user_db ORDER BY FOLLOWERS ASC LIMIT {}'.format(n_select))
 data = curr.fetchall()
 Pineline = EdgesPipeline()
+rank = 0
 
 for row in tqdm(data):
     id = str(row[0])
-    print(id)
+    rank += 1
     cursor = []
-    cursee = []
+    # cursee = []
 
-    Pineline.follower_parse(id, cursor)
-    Pineline.followee_parse(id, cursee)
+    Pineline.follower_parse(id, rank, cursor)
+    # Pineline.followee_parse(id, cursee)
