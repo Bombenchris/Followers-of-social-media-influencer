@@ -96,8 +96,8 @@ twitch.authenticate_app([])
 database = 'Overwatch.db'
 conn = sqlite3.connect(database)
 curr = conn.cursor()
-n_select = 10
-curr.execute('SELECT * FROM user_db ORDER BY FOLLOWERS ASC LIMIT {}'.format(n_select))
+n_select = 200
+curr.execute('SELECT * FROM user_db ORDER BY FOLLOWERS DESC LIMIT {}'.format(n_select))
 data = curr.fetchall()
 Pineline = EdgesPipeline()
 rank = 0

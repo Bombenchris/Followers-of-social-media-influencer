@@ -6,18 +6,6 @@ import numpy as np
 from datetime import datetime
 
 
-def get_ranking(game, n_select):
-    game_db = '{}.db'.format(game)
-    conn = sqlite3.connect(game_db)
-    c = conn.cursor()
-
-    # data id order by follower number desc.
-    c.execute('SELECT ID FROM user_db ORDER BY FOLLOWERS DESC LIMIT {}'.format(n_select))
-    data = c.fetchall()
-    c.close()
-    return data
-
-
 def get_edge(game):
 
     edge_db = '{}_Edge.db'.format(game)
