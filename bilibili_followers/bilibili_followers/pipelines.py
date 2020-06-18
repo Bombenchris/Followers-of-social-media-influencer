@@ -17,7 +17,7 @@ class FollowersPipeline:
         self.create_table()
 
     def create_connection(self):
-        self.conn = sqlite3.connect("Overwatch.db")
+        self.conn = sqlite3.connect("Dead by Daylight.db")
         self.curr = self.conn.cursor()
 
     def create_table(self):
@@ -34,7 +34,7 @@ class FollowersPipeline:
         return item
 
     def store_db(self, item):
-        self.curr.execute("""insert or ignore into user_db values (?,?,?,?)""", (
+        self.curr.execute("""insert or replace into user_db values (?,?,?,?)""", (
             item['ID'],
             item['USER'],
             item['FOLLOWERS'],

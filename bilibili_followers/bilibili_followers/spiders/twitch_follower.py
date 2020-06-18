@@ -20,7 +20,7 @@ class twitch_follower(scrapy.Spider):
 
     def parse(self, response):
 
-        game = twitch_follower.twitch.get_games(names='Overwatch')
+        game = twitch_follower.twitch.get_games(names='Dead by Daylight')
         gaming_id = game['data'][0]['id']
 
         # page range
