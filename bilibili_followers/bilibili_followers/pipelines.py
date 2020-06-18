@@ -10,7 +10,6 @@
 
 import sqlite3
 
-
 class FollowersPipeline:
 
     def __init__(self):
@@ -18,14 +17,16 @@ class FollowersPipeline:
         self.create_table()
 
     def create_connection(self):
-        self.conn = sqlite3.connect("bilibili.db")
+        self.conn = sqlite3.connect("Overwatch.db")
         self.curr = self.conn.cursor()
 
     def create_table(self):
-        self.curr.execute("""DROP TABLE IF EXISTS bilibili_db""")
-        self.curr.execute("""create table bilibili_db(
-                USER INTEGER,
-                FOLLOWERS INTEGER
+        # self.curr.execute("""DROP TABLE IF EXISTS user_db""")
+        self.curr.execute("""create table IF NOT EXISTS user_db(
+                Id INTEGER UNIQUE,
+                Label INTEGER UNIQUE,
+                FOLLOWERS INTEGER,
+                view_count INTEGER
                 )""")
 
     def process_item(self, item, spider):
@@ -33,8 +34,10 @@ class FollowersPipeline:
         return item
 
     def store_db(self, item):
-        self.curr.execute("""insert into bilibili_db values (?,?)""", (
+        self.curr.execute("""insert or ignore into user_db values (?,?,?,?)""", (
+            item['ID'],
             item['USER'],
-            item['FOLLOWERS']
+            item['FOLLOWERS'],
+            item['view_count']
         ))
         self.conn.commit()

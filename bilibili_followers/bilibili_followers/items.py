@@ -8,8 +8,11 @@
 import scrapy
 
 
-class BilibiliFollowersItem(scrapy.Item):
+class FollowersItem(scrapy.Item):
     # define the fields for your item here like:
+    ID = scrapy.Field()
     USER = scrapy.Field()
     FOLLOWERS = scrapy.Field()
+    view_count = scrapy.Field()
+
     pass
