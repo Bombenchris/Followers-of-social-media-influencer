@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 
 
 def read_from_db(curr, n_select):
-    curr.execute('SELECT COUNT(DISTINCT USER) FROM bilibili_db')
+    curr.execute('SELECT COUNT(DISTINCT USER) FROM user_db')
     n = curr.fetchone()[0]  # total number of user
-    # n_select = 20
-    curr.execute('SELECT * FROM bilibili_db ORDER BY FOLLOWERS DESC LIMIT {}'.format(n_select))
+
+    curr.execute('SELECT * FROM user_db ORDER BY FOLLOWERS DESC LIMIT {}'.format(n_select))
     # curr.execute('SELECT * FROM bilibili_db ORDER BY FOLLOWERS DESC LIMIT {} OFFSET 50'.format(n_select))
     data = curr.fetchall()
     user_sort = range(1, n_select + 1)
@@ -41,12 +41,17 @@ def data_plot(curr, n_select):
     plt.plot
 
 
-# database = 'bilibili_douga_other_01012020_01042020.db'
-# database = 'bilibili_music_original_01032020_31032020.db'
+# database = 'bilibili_life_funny_01012020_01042020.db'
+# database = 'bilibili_music_others_01032020_31032020.db'
 # database = 'bilibili_ent_variety_01012020_01042020.db'
-database = 'bilibili_life_funny_01012020_01042020.db'
+# database = 'bilibili_life_funny_01012020_01042020.db'
+# database = 'bilibili_movie_montage_01012020_01042020.db'
+# database = 'bilibili_ent_star_01012020_01042020.db'
+# database = 'bilibili_douga_other_01012020_01042020.db'
+database = 'twitch_LOL.db'  # test
 conn = sqlite3.connect(database)
-
 c = conn.cursor()
-n_select = 20
-data_plot(c, n_select)
+
+n_select = [5]
+for n in n_select:
+    data_plot(c, n)
