@@ -34,32 +34,35 @@ class EdgesPipeline:
         ))
         self.conn.commit()
 
-    def follower_parse(self, user_id, rank, edgePage_cursor):
-        if not edgePage_cursor:
-            user_followers = twitch.get_users_follows(first=100, to_id=user_id)
-            try:
-                edgePage_cursor.append(user_followers['pagination']['cursor'])
-            except:
-                pass
-        else:
-            user_followers = twitch.get_users_follows(after=edgePage_cursor.pop(), first=100, to_id=user_id)
+    def follower_parse(self, user_id, rank, loops):
+        edgePage_cursor = []
 
-            try:
-                edgePage_cursor.append(user_followers['pagination']['cursor'])
-            except:
-                pass
+        for loop in range(loops):
+            if not edgePage_cursor:
+                user_followers = twitch.get_users_follows(first=100, to_id=user_id)
+                try:
+                    edgePage_cursor.append(user_followers['pagination']['cursor'])
+                except:
+                    pass
+            else:
+                user_followers = twitch.get_users_follows(after=edgePage_cursor.pop(), first=100, to_id=user_id)
 
-        items = {}
-        for follower in user_followers['data']:
-            items['SOURCE'] = int(follower['from_id'])
-            items['TARGET'] = int(user_id)
-            items['TYPE'] = 'Directed'
-            items['DATE'] = follower['followed_at']
-            items['RANK'] = rank
-            self.store_db(items)
-        if edgePage_cursor and 'cursor' in twitch.get_users_follows(after=edgePage_cursor[0], first=100, to_id=user_id)[
-            'pagination']:
-            self.follower_parse(user_id, edgePage_cursor)
+                try:
+                    edgePage_cursor.append(user_followers['pagination']['cursor'])
+                except:
+                    pass
+
+            items = {}
+            for follower in user_followers['data']:
+                items['SOURCE'] = int(follower['from_id'])
+                items['TARGET'] = int(user_id)
+                items['TYPE'] = 'Directed'
+                items['DATE'] = follower['followed_at']
+                items['RANK'] = rank
+                self.store_db(items)
+        # if edgePage_cursor and 'cursor' in twitch.get_users_follows(after=edgePage_cursor[0], first=100, to_id=user_id)[
+        #     'pagination']:
+        #     self.follower_parse(user_id, rank, edgePage_cursor)
 
     def followee_parse(self, user_id, edgePage_cursor):
         if not edgePage_cursor:
@@ -96,7 +99,7 @@ twitch.authenticate_app([])
 database = 'Overwatch.db'
 conn = sqlite3.connect(database)
 curr = conn.cursor()
-n_select = 200
+n_select = 50
 curr.execute('SELECT * FROM user_db ORDER BY FOLLOWERS DESC LIMIT {}'.format(n_select))
 data = curr.fetchall()
 Pineline = EdgesPipeline()
@@ -104,9 +107,11 @@ rank = 0
 
 for row in tqdm(data):
     id = str(row[0])
+    follower = row[2]
+    loops = round(follower/100) + 1
+    print(loops)
     rank += 1
-    cursor = []
     # cursee = []
 
-    Pineline.follower_parse(id, rank, cursor)
+    Pineline.follower_parse(id, rank, loops)
     # Pineline.followee_parse(id, cursee)
