@@ -11,7 +11,7 @@ class EdgesPipeline:
         self.create_table()
 
     def create_connection(self):
-        self.conn = sqlite3.connect("Overwatch_Edge.db")
+        self.conn = sqlite3.connect("The Legend of Zelda_Edge.db")
         self.curr = self.conn.cursor()
 
     def create_table(self):
@@ -25,7 +25,7 @@ class EdgesPipeline:
                 )""")
 
     def store_db(self, item):
-        self.curr.execute("""insert or ignore into Edges_db values (?,?,?,?,?)""", (
+        self.curr.execute("""insert or replace into Edges_db values (?,?,?,?,?)""", (
             item['SOURCE'],
             item['TARGET'],
             item['TYPE'],
@@ -93,25 +93,27 @@ class EdgesPipeline:
 iMaxStackSize = 10000
 sys.setrecursionlimit(iMaxStackSize)
 
-twitch = Twitch('msopj3elolkfedu4zxkamqb5koywm3', 'mr36ie37di0w5tjrhah4lma0nh7aq8')
+twitch = Twitch('x5chjai5leju0kgmqu4fh8l6hc5ycu', 'csopzwzqls7ogl2e35jvjm089gbyth')
 twitch.authenticate_app([])
 
-database = 'Overwatch.db'
+database = 'The Legend of Zelda.db'
 conn = sqlite3.connect(database)
 curr = conn.cursor()
-n_select = 50
-curr.execute('SELECT * FROM user_db ORDER BY FOLLOWERS DESC LIMIT {}'.format(n_select))
+n_select = 212
+curr.execute('SELECT * FROM user_db ORDER BY FOLLOWERS ASC LIMIT {}'.format(n_select))
 data = curr.fetchall()
 Pineline = EdgesPipeline()
-rank = 0
+
+rank = n_select #descending order, Note: it should be total num. of the database!!!
 
 for row in tqdm(data):
     id = str(row[0])
     follower = row[2]
     loops = round(follower/100) + 1
     print(loops)
-    rank += 1
-    # cursee = []
+
 
     Pineline.follower_parse(id, rank, loops)
+    rank -= 1 #ascending order
+
     # Pineline.followee_parse(id, cursee)

@@ -12,7 +12,7 @@ class twitch_follower(scrapy.Spider):
     ]
     items = FollowersItem()
 
-    twitch = Twitch('msopj3elolkfedu4zxkamqb5koywm3', 'mr36ie37di0w5tjrhah4lma0nh7aq8')
+    twitch = Twitch('x5chjai5leju0kgmqu4fh8l6hc5ycu', 'csopzwzqls7ogl2e35jvjm089gbyth')
     twitch.authenticate_app([])
     pagination_cursor = []
     edgePage_cursor = []
@@ -20,7 +20,7 @@ class twitch_follower(scrapy.Spider):
 
     def parse(self, response):
 
-        game = twitch_follower.twitch.get_games(names='Dead by Daylight')
+        game = twitch_follower.twitch.get_games(names='The Legend of Zelda: Breath of the Wild')
         gaming_id = game['data'][0]['id']
 
         # page range

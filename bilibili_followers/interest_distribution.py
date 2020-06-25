@@ -28,24 +28,25 @@ def delete_id(source, broadcaster_id):
     return source
 
 
-game = 'Rust'
-n_select = 100
+game = 'God of War'
+n_select = 196
 fq_filter = 1
 broadcaster_id = get_data(game, n_select, fq_filter)
 
 if fq_filter > 1:
     edge_db = '{}_Edge_filter{}.db'.format(game, fq_filter)
 else:
-    edge_db = '{}_Edge_list.db'.format(game)
+    edge_db = '{}_Edge.db'.format(game)
 conn = sqlite3.connect(edge_db)
 c = conn.cursor()
 source = c.execute("SELECT source FROM Edges_db").fetchall()
-source = delete_id(source, broadcaster_id)
+# source = delete_id(source, broadcaster_id)
 
 counts = Counter(elem[0] for elem in source)
 
 data = pd.Series(counts)
-data.value_counts().plot(kind='bar', log=True)
+output = data.value_counts().sort_index()
+output.plot(kind='bar', log=True)
 
 plt.xlabel('Follower outdegree')
 plt.ylabel('#Follower')
