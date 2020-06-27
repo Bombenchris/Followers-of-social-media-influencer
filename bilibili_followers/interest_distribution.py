@@ -28,15 +28,47 @@ def delete_id(source, broadcaster_id):
     return source
 
 
-game = 'God of War'
-n_select = 196
+def delete_nonactive_follower(game, date):
+
+    # get active followers
+    edge_db = '{}_Edge.db'.format(game)
+    conn = sqlite3.connect(edge_db)
+    c = conn.cursor()
+    source_active = c.execute("select source from Edges_db where date>'{}' group by source".format(date)).fetchall()
+    source_active = tuple(id[0] for id in source_active)
+    data_active = c.execute("select * from Edges_db where source in {}".format(source_active)).fetchall()
+    c.close()
+
+
+    # write to new database
+    edge_filter_db = '{}_Edge_active.db'.format(game)
+    conn = sqlite3.connect(edge_filter_db)
+    c = conn.cursor()
+    createTable = """create table IF NOT EXISTS Edges_db(
+                Source INTEGER,
+                Target INTEGER,
+                Type TEXT,
+                Date TEXT,
+                Target_rank INTEGER,
+                UNIQUE (Source, Target)
+                )"""
+    c.execute(createTable)
+
+    insertTable = "INSERT or replace INTO Edges_db values (?,?,?,?,?)"
+    c.executemany(insertTable, data_active)
+    conn.commit()
+
+
+game = 'Overwatch'
+# n_select = 196
 fq_filter = 1
-broadcaster_id = get_data(game, n_select, fq_filter)
+# broadcaster_id = get_data(game, n_select, fq_filter)
+delete_nonactive_follower(game, date='2020-06-01')
 
 if fq_filter > 1:
     edge_db = '{}_Edge_filter{}.db'.format(game, fq_filter)
 else:
-    edge_db = '{}_Edge.db'.format(game)
+    edge_db = '{}_Edge_active.db'.format(game)
 conn = sqlite3.connect(edge_db)
 c = conn.cursor()
 source = c.execute("SELECT source FROM Edges_db").fetchall()
